@@ -1,7 +1,7 @@
 """Simple program to create 3D perspective from a 2D grid map.
-Algorithm is adapted from: 
+Algorithm is adapted from:
     https://lodev.org/cgtutor/raycasting.html#The_Basic_Idea_
-With supplemental resource: 
+With supplemental resource:
     https://www.youtube.com/watch?v=NbSee-XM7WA
 """
 import math
@@ -39,23 +39,27 @@ def normalize(vector) -> np.ndarray:
 
 def run(start, direction_ray, grid_dict):
     # grid of integers
+    INF_VAL = 1e30 # can use float("inf") as well
+    # start may be floats
     pos = Point2(start[0], start[1])
-    ray_dir = Point2(*normalize(direction_ray))
+    ray_dir = Point2(*direction_ray)
+    # get the int values of the start xy
     int_map = [int(pos.x), int(pos.y)]
-    delta_dist = Point2(
-        scaled_distance(ray_dir.y, ray_dir.x),
-        scaled_distance(ray_dir.x, ray_dir.y)
-    )
-    INF = float("inf")
-    #print(int_map, ray_dir, delta_dist)
-    if delta_dist.x == INF or delta_dist.y == INF:
-        if delta_dist.x == INF:
-            delta_dist = Point2(1e100, delta_dist.y)
-        if delta_dist.y == INF:
-            delta_dist = Point2(delta_dist.x, 1e100)
-        #return 0, -1, -1
-    #   step_x, step_y
-    # side_dist_x, side_dist_y = 0.0, 0.0
+    # ||ray_dir|| = 1 since ray_dir is normalized
+    # delta_dist = abs(||ray_dir||/ray_dir.x, ||ray_dir||/ray_dir.y)
+    # delta_dist = abs(1/ray_dir.x, 1/ray_dir.y)
+    # handle division by 0
+    if ray_dir.x == 0 or ray_dir.y == 0:
+        if ray_dir.x == 0:
+            delta_dist = Point2(INF_VAL, abs(1/ray_dir.y))
+        else:
+            delta_dist = Point2(abs(1/ray_dir.x), INF_VAL)
+    else:
+        # no division by 0
+        delta_dist = Point2(
+        abs(1/ray_dir.x),
+        abs(1/ray_dir.y)
+        )
     # calculate step and initial side dist
     if numerical.is_below(ray_dir.x, 0):
         step_x = -1
@@ -75,12 +79,12 @@ def run(start, direction_ray, grid_dict):
     MAX_ITERATIONS = 1e2
     iterations = 0
     # initialize default vals
-    perp_wall_dist = 1e20
+    perp_wall_dist = INF_VAL
     side = -1
     element = -1
     while not hit:
         iterations += 1
-        if side_dist_x < side_dist_y:
+        if numerical.is_below(side_dist_x, side_dist_y):
             side_dist_x += delta_dist.x
             int_map[0] += step.x
             side = 0
@@ -250,6 +254,7 @@ def main():
         for x in range(width):
             camera_x = ((2*x) / width) - 1
             ray_dir = (direction.x + (plane.x*camera_x), direction.y + (plane.y*camera_x))
+            cam = (22, 12)
             dist, side, element = run(origin, ray_dir, grid)[:]
             if side == -1:
                 # ray did not collide with anything
