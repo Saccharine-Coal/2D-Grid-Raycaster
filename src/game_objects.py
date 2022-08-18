@@ -1,3 +1,4 @@
+"""Holds simple game classes."""
 import pygame as pg
 
 import functions
@@ -5,13 +6,19 @@ import constants
 import grid
 
 
-# construct dictionary grid
+# construct dictionary from a nested array to simplify grid indexing
 Grid = {}
 for x, row in enumerate(grid.GRID):
     for y, element in enumerate(row):
         Grid[(x, y)] = element
 
+
 class Player:
+    """Game object that represents a player.
+    Position is represented by a cartesian pair (x, y).
+    Each player has a direction vector and plane vector.
+    Player movement is handled by Player.move() and Player.rotate()."""
+
     def __init__(self, xy):
         (self.x, self.y) = xy
         self.direction = constants.Point2(1, 0)
@@ -48,6 +55,8 @@ class Player:
 
 
 class MiniMap:
+    """Game object that represents a small 2D top down view of the map."""
+
     def __init__(self):
         self.scale = constants.scale
         self.w, self.h = len(grid.GRID), len(grid.GRID[0])
