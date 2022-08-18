@@ -1,3 +1,4 @@
+"""Common functions are grouped here to declutter main."""
 import math
 
 

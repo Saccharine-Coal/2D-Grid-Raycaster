@@ -10,7 +10,7 @@ FPS = 60                        # max fps of game
 
 # WORLD SETTINGS
 STEP = 1                        # how many steps to take when casting rays
-SLOW = False                    # show raycasting drawing process
+SLOW = True                    # show raycasting drawing process
 # maps grid elements to colors
 INT_TO_COLOR = {
     1: (255, 0, 0),
@@ -29,6 +29,8 @@ CEILING = (25, 25, 25)          # color of ceiling
 # PLAYER SETTINGS
 STEPSIZE = 0.035                # move player by size steps on keypress
 DEG_STEP = 1                    # rotate player by size steps on keypress
+if SLOW:
+    DEG_STEP = 3 * DEG_STEP     # increase step size if SLOW=True
 
 # MINIMAP SETTINGS
 SCALE = 6                       # scaling of minimap

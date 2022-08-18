@@ -22,7 +22,7 @@ import constants
 import functions
 
 
-def main():
+def main() -> None:
     """Run the game. Initializes pygame and game objects.
     Handles user input, updates game objects, and draws to the screen."""
 
@@ -71,8 +71,8 @@ def main():
     grid = game_objects.Grid
     mini_map = game_objects.MiniMap()
     pg.init()
-    font = pg.font.SysFont(pg.font.get_default_font(), 24)
-    clock = pg.time.Clock()
+    font = pg.font.SysFont(pg.font.get_default_font(), 24)  # create font object
+    clock = pg.time.Clock()     # create clock object
     # Set up the drawing window
     size = (width, height) = constants.SIZE
     screen = pg.display.set_mode(size)
@@ -109,10 +109,14 @@ def main():
 def cast_rays(
     screen, origin, direction, plane, grid_dict, width, height, step=1, slow=False
 ):
-    # TODO: DOCSTRING
+    """Cast rays perpendicular to <plane> in the direction of <direction> from <origin>.
+    A ray is casted for every <step> taken from 0 to <width>.
+    If a valid tile is hit by a row then the wall is drawn as a line.
+    If slow is True, the screen is drawn after every step."""
 
     def get_ray(x, direction, plane, width):
-        # TODO: DOCSTRING
+        """Construct a ray that is perpendicular to plane in the given direction
+        for given screen position on screen x-axis."""
         camera_x = ((2 * x) / width) - 1
         ray_dir = constants.Point2(
             direction.x + (plane.x * camera_x),
@@ -121,7 +125,8 @@ def cast_rays(
         return ray_dir
 
     def get_color(distance, side, element):
-        # TODO: DOCSTRING
+        """Get the color for given element and darken color
+        depending on side hit and distance from start."""
         color = constants.INT_TO_COLOR.get(element)
         # dist -> depth -> darker
         ratio = 1 - (1 / (distance + 1))
@@ -132,7 +137,7 @@ def cast_rays(
         return color
 
     def get_y_limits(distance, height):
-        # TODO: DOCSTRING
+        """Get the start values of walls to be drawn along y-axis."""
         line_height = height / distance
         y_start = (-line_height + height) / 2
         if y_start < 0:
@@ -143,7 +148,7 @@ def cast_rays(
         return (y_start, y_end)
 
     def draw_wall(screen, color, x, y_limits, step, slow):
-        # TODO: DOCSTRING
+        """Draw section of a wall encountered by ray."""
         (y_start, y_end) = y_limits
         for i in range(step):
             pg.draw.aaline(screen, color, (x + i, y_start), (x + i, y_end))
@@ -165,10 +170,18 @@ def cast_rays(
 
 
 def run_along_ray(start, direction_ray, grid_dict):
-    # TODO: DOCSTRING
+    """Apply the DDA from <start> along <direction_ray> until
+    a valid tile is encountered in <grid_dict> or max_iterations if reached.
+    The DDA algorithm decomposes <direction_ray> into side side distances
+    and takes integer steps along <direction_ray>. The algorithm
+    runs along the minimum x, y combination."""
 
     def construct_deltas(ray_dir, pos, int_map):
-        # TODO: DOCSTRING
+        """Construct <step>, <side_dist>, and <dist> delta pairs.
+        <step> represents an integer step along x/y.
+        <side_dist> represents the total distance along x/y.
+        <delta_dist> represents the distance along x/y that moves a
+        whole integer step."""
         # ||ray_dir|| = 1 since ray_dir is normalized
         # delta_dist = abs(||ray_dir||/ray_dir.x, ||ray_dir||/ray_dir.y)
         # delta_dist = abs(1/ray_dir.x, 1/ray_dir.y)
@@ -199,16 +212,18 @@ def run_along_ray(start, direction_ray, grid_dict):
         step = constants.Point2(step_x, step_y)
         return step, side_dist, delta_dist
 
-    def hit_wall(int_map, grid_dict, max_iterations):
-        # TODO: DOCSTRING
+    def hit_wall(int_map, grid_dict, max_iterations) -> bool:
+        """Check if a valid tile has been hit by ray or run
+        has iterated max_iterations times."""
         element = grid_dict.setdefault(tuple(int_map), -1)
         if element > 0 or max_iterations == 0:
             # collision or max_iterations has been met
             return True
         return False
 
-    def calculate_wall_distance(side_dist, delta_dist, side):
-        # TODO: DOCSTRING
+    def calculate_wall_distance(side_dist, delta_dist, side) -> float:
+        """Calculates euclidean distance of <start> to intersection point.
+        Handles which side of a cube is hit. If no wall is hit returns infinity."""
         if side == 0:
             # side is vertical
             perp_wall_dist = side_dist[0] - delta_dist.x
@@ -220,7 +235,6 @@ def run_along_ray(start, direction_ray, grid_dict):
             perp_wall_dist = float("inf")
         return perp_wall_dist
 
-    # TODO: DOCSTRING
     # grid of integers
     # start may be floats
     # get the int values of the start xy
@@ -242,9 +256,8 @@ def run_along_ray(start, direction_ray, grid_dict):
 
 
 def walk_along_ray(int_map, step, side_dist, delta_dist):
-    # TODO: DOCSTRING
-    """Take a step along a given ray by following a delta dist.
-    Return SIDE if a wall is hit or max iterations is hit."""
+    """Take a <step> along a given ray by following a <delta_dist>.
+    Returns new <side_dist>, new <int_map>, and <side>."""
     assert isinstance(int_map, list) and isinstance(
         side_dist, list
     ), "Must be a mutable (list) iterable!"

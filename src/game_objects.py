@@ -41,20 +41,6 @@ class Player:
         self.plane = constants.Point2(*functions.rotate_by_step(self.plane, rads))
 
     def handle_event(self, events, pressed) -> None:
-        """
-        for event in events:
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_LEFT:
-                    self.rotate(constants.DEG_STEP)
-                if event.key == pg.K_RIGHT:
-                    self.rotate(-constants.DEG_STEP)
-                if event.key == pg.K_DOWN or pressed[pg.K_DOWN]:
-                    self.x -= constants.STEPSIZE * self.direction.x
-                    self.y -= constants.STEPSIZE * self.direction.y
-                if event.key == pg.K_UP:
-                    self.x += constants.STEPSIZE * self.direction.x
-                    self.y += constants.STEPSIZE * self.direction.y
-        """
         # check pressed keys
         if pressed[pg.K_LEFT]:
             self.rotate(-constants.DEG_STEP)
