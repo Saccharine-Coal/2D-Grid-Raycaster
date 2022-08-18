@@ -29,13 +29,17 @@ def main():
     def handle_events():
         """Abstracted function: Handle all game events"""
         running = True
-        for event in pg.event.get():
+        # get events
+        events = pg.event.get()
+        # get pressed keys
+        pressed = pg.key.get_pressed()
+        for event in events:
             if event.type == pg.QUIT:
                 running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     running = False
-            player.handle_event(event)
+        player.handle_event(events, pressed)
         return running
 
     def clear_screen():

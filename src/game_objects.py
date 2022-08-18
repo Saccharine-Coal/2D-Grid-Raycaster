@@ -19,46 +19,58 @@ class Player:
     Each player has a direction vector and plane vector.
     Player movement is handled by Player.move() and Player.rotate()."""
 
-    def __init__(self, xy):
+    def __init__(self, xy) -> None:
         (self.x, self.y) = xy
         self.direction = constants.Point2(1, 0)
         self.plane = constants.Point2(0, 0.66)
 
     @property
-    def xy(self):
+    def xy(self) -> constants.Point2:
         return constants.Point2(self.x, self.y)
 
-    def move(self, dx=0, dy=0):
-        self.x += dx
-        self.y += dy
+    def move(self, dx=0, dy=0) -> None:
+        self.x += dx * constants.STEPSIZE * self.direction.x
+        self.y += dy * constants.STEPSIZE * self.direction.y
 
-    def rotate(self, degrees):
+    def rotate(self, degrees) -> None:
         """Rotate the plane and direction ray."""
-        rads = (degrees / 36) * constants.RAD_STEP
+        rads = (degrees / 36) * constants.DEG_STEP
         self.direction = constants.Point2(
             *functions.rotate_by_step(self.direction, rads)
         )
         self.plane = constants.Point2(*functions.rotate_by_step(self.plane, rads))
 
-    def handle_event(self, event):
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_LEFT:
-                self.rotate(-60)
-            if event.key == pg.K_RIGHT:
-                self.rotate(60)
-            if event.key == pg.K_DOWN:
-                self.x -= constants.STEPSIZE * self.direction.x
-                self.y -= constants.STEPSIZE * self.direction.y
-            if event.key == pg.K_UP:
-                self.x += constants.STEPSIZE * self.direction.x
-                self.y += constants.STEPSIZE * self.direction.y
+    def handle_event(self, events, pressed) -> None:
+        """
+        for event in events:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_LEFT:
+                    self.rotate(constants.DEG_STEP)
+                if event.key == pg.K_RIGHT:
+                    self.rotate(-constants.DEG_STEP)
+                if event.key == pg.K_DOWN or pressed[pg.K_DOWN]:
+                    self.x -= constants.STEPSIZE * self.direction.x
+                    self.y -= constants.STEPSIZE * self.direction.y
+                if event.key == pg.K_UP:
+                    self.x += constants.STEPSIZE * self.direction.x
+                    self.y += constants.STEPSIZE * self.direction.y
+        """
+        # check pressed keys
+        if pressed[pg.K_LEFT]:
+            self.rotate(-constants.DEG_STEP)
+        if pressed[pg.K_RIGHT]:
+            self.rotate(constants.DEG_STEP)
+        if pressed[pg.K_DOWN]:
+            self.move(-1, -1)
+        if pressed[pg.K_UP]:
+            self.move(1, 1)
 
 
 class MiniMap:
     """Game object that represents a small 2D top down view of the map."""
 
     def __init__(self):
-        self.scale = constants.scale
+        self.scale = constants.SCALE
         self.w, self.h = len(grid.GRID), len(grid.GRID[0])
         self.subwindow = pg.Surface((self.w * self.scale, self.h * self.scale))
 
