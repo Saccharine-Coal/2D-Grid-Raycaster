@@ -80,7 +80,6 @@ def main() -> None:
     running = True
     while running:
         clock.tick(constants.FPS)
-        print(f"fps={clock.get_fps():.0f}")
         # HANDLE EVENTS
         running = handle_events()  # Run until the user asks to quit
         # DRAW

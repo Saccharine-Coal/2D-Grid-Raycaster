@@ -10,7 +10,7 @@ FPS = 60                        # max fps of game
 
 # WORLD SETTINGS
 STEP = 1                        # how many steps to take when casting rays
-SLOW = True                    # show raycasting drawing process
+SLOW = False                    # show raycasting drawing process
 # maps grid elements to colors
 INT_TO_COLOR = {
     1: (255, 0, 0),
