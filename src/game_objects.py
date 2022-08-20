@@ -65,7 +65,11 @@ class MiniMap:
         for index, element in grid.items():
             x, y = index[:]
             if element > 0:
-                color = constants.INT_TO_COLOR.get(element)
+                if element >= 100:
+                    # is referencing a texture element
+                    color = (100, 100, 100)
+                else:
+                    color = constants.INT_TO_COLOR.get(element)
                 pg.draw.rect(
                     self.subwindow,
                     color,

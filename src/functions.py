@@ -1,5 +1,9 @@
 """Common functions are grouped here to declutter main."""
 import math
+import os
+
+import numpy as np
+import pygame as pg
 
 
 def rotate_by_step(xy, rad) -> tuple:
