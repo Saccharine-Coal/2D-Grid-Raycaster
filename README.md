@@ -24,7 +24,42 @@ Game runtime settings can be changing by modifying src/constants.py. A list of s
 | TEX_WIDTH, TEX_HEIGHT 	| Controls the dimensions of the textures provided. Textures should be square. |
 | INTERVAL 								| Controls the quality of textures as a function of distance. |
 
+## Dependencies
+1. Python3 >= 3.6
+2. Numpy
+3. Pygame2
+
+<!-- ROADMAP -->
+## Roadmap
+
+- [] WRITE README
+    - [ ] Table of contents
+    - [ ] Installation
+		- [ ] Usage
+		- [ ] Fill out acknowledgements
+		- [ ] Update example media
+- [] Add to main functions documentation
+- [] Format code
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+
 ## Reading
 1. [Super Fast Ray Casting in Tiled Worlds using DDA](https://www.youtube.com/watch?v=NbSee-XM7WA)
 2. [Lode's Computer Graphics Tutorial](https://lodev.org/cgtutor/raycasting.html#The_Basic_Idea_)
 3. [Rendering Raycasting](https://www.youtube.com/watch?v=Vij_obgv9h4)
+4. [Pygame Docs](https://www.pygame.org/docs/)
+5. [Cython Docs](https://cython.readthedocs.io/en/latest/index.html)
+6. [Numpy Docs](https://numpy.org/doc/stable/user/index.html#user)
+7. [Recommended Beginner Python Interpreter](https://codewith.mu/en/)
+
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+Helpful resources used in this project.
+* [README Template](https://github.com/othneildrew/Best-README-Template)
