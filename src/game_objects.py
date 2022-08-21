@@ -47,15 +47,17 @@ class Player:
     def handle_event(self, events, pressed, dt) -> None:
         # check pressed keys
         if pressed[pg.K_LEFT]:
-            self.rotate(-constants.DEG_STEP*dt)
+            self.rotate(-constants.DEG_STEP * dt)
         if pressed[pg.K_RIGHT]:
-            self.rotate(constants.DEG_STEP*dt)
+            self.rotate(constants.DEG_STEP * dt)
         if pressed[pg.K_DOWN]:
-            self.move(-1*dt, -1*dt)
+            self.move(-1 * dt, -1 * dt)
         if pressed[pg.K_UP]:
-            self.move(1*dt, 1*dt)
+            self.move(1 * dt, 1 * dt)
 
     def is_colliding(self, x, y) -> bool:
+        return False
+        # TODO: implement a working function
         pos = (int(round(x)), int(round(y)))
         if pos in self.grid and self.grid[pos] != 0:
             return True
