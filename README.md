@@ -6,7 +6,7 @@ Will write more ... soon.
 Game runtime settings can be changing by modifying src/constants.py. A list of setting anems and descriptions are written below.
 
 | Name | Description |
----
+|----- | ----------- |
 | SIZE										| Controls resolution of game window. |
 | FPS											| Controls max FPS of game. |
 | STEP										| Controls base rendering quality for all textures. Larger results in worse rendering quality. |
