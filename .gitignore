@@ -130,3 +130,6 @@ dmypy.json
 
 # Gutentags
 tags
+# ignore cpython files
+build
+test

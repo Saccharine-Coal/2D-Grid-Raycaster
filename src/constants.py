@@ -5,12 +5,15 @@ from collections import namedtuple
 Point2 = namedtuple("Point2", "x y")
 
 # GAME SETTINGS
-SIZE = (500, 500)               # game window size
+SIZE = (600, 600)               # game window size
 FPS = 60                        # max fps of game
 
 # WORLD SETTINGS
-STEP = 1                        # how many steps to take when casting rays
+STEP = 2                        # how many steps to take when casting rays
 SLOW = False                    # show raycasting drawing process
+RANDOM = True
+EMPTY_CHANCE = 0.8
+DIM = 40
 # maps grid elements to colors
 INT_TO_COLOR = {
     1: (255, 0, 0),
@@ -41,14 +44,14 @@ CEILING = (20, 20, 20)       # color of ceiling
 
 
 # PLAYER SETTINGS
-STEPSIZE = 0.035                # move player by size steps on keypress
-DEG_STEP = 1                    # rotate player by size steps on keypress
+STEPSIZE = 0.0035                # move player by size steps on keypress
+DEG_STEP = 0.3                    # rotate player by size steps on keypress
 if SLOW:
     DEG_STEP = 3 * DEG_STEP     # increase step size if SLOW=True
 
 # MINIMAP SETTINGS
-SCALE = 6                       # scaling of minimap
+SCALE = 4                       # scaling of minimap
 
 # TEXTURE SETTINGS
-TEX_WIDTH = 64
-TEX_HEIGHT = 64
+TEX_WIDTH = TEX_HEIGHT = 64
+INTERVAL = 3        # controls quality of textures as a function of distance

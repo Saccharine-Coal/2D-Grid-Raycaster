@@ -23,14 +23,18 @@ class Player:
         (self.x, self.y) = xy
         self.direction = constants.Point2(1, 0)
         self.plane = constants.Point2(0, 0.66)
+        self.grid = Grid
 
     @property
     def xy(self) -> constants.Point2:
         return constants.Point2(self.x, self.y)
 
     def move(self, dx=0, dy=0) -> None:
-        self.x += dx * constants.STEPSIZE * self.direction.x
-        self.y += dy * constants.STEPSIZE * self.direction.y
+        x = self.x + dx * constants.STEPSIZE * self.direction.x
+        y = self.y + dy * constants.STEPSIZE * self.direction.y
+        if self.is_colliding(x, y):
+            return
+        self.x, self.y = x, y
 
     def rotate(self, degrees) -> None:
         """Rotate the plane and direction ray."""
@@ -40,16 +44,22 @@ class Player:
         )
         self.plane = constants.Point2(*functions.rotate_by_step(self.plane, rads))
 
-    def handle_event(self, events, pressed) -> None:
+    def handle_event(self, events, pressed, dt) -> None:
         # check pressed keys
         if pressed[pg.K_LEFT]:
-            self.rotate(-constants.DEG_STEP)
+            self.rotate(-constants.DEG_STEP*dt)
         if pressed[pg.K_RIGHT]:
-            self.rotate(constants.DEG_STEP)
+            self.rotate(constants.DEG_STEP*dt)
         if pressed[pg.K_DOWN]:
-            self.move(-1, -1)
+            self.move(-1*dt, -1*dt)
         if pressed[pg.K_UP]:
-            self.move(1, 1)
+            self.move(1*dt, 1*dt)
+
+    def is_colliding(self, x, y) -> bool:
+        pos = (int(round(x)), int(round(y)))
+        if pos in self.grid and self.grid[pos] != 0:
+            return True
+        return False
 
 
 class MiniMap:

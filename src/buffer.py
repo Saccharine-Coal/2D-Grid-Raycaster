@@ -5,14 +5,11 @@ import pygame as pg
 import numpy as np
 
 
-def load_as_array(path, colorkey=None) -> np.ndarray:
+def load_as_array(path, scale=1) -> np.ndarray:
     # TODO: docstring
     assert os.path.exists(path), "Not a valid path!"
-    if colorkey:
-        surface = pg.image.load(path, ".png").convert_alpha()
-        surface.set_colorkey(colorkey)
-        return pg.surfarray.pixels2d(surface)
-    return pg.surfarray.pixels2d(pg.image.load(path, ".png").convert_alpha())
+    surface = pg.image.load(path, ".png").convert_alpha()
+    return pg.surfarray.pixels2d(surface)
 
 
 def construct_pixel_buffer(surface) -> np.ndarray:

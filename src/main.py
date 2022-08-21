@@ -41,7 +41,7 @@ def main() -> None:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     running = False
-        player.handle_event(events, pressed)
+        player.handle_event(events, pressed, dt)
         return running
 
     def clear_screen():
@@ -60,7 +60,7 @@ def main() -> None:
 
     def draw_text():
         """Abstracted function: Draw game performance statistics"""
-        text = font.render(f"fps={int(clock.get_fps())}", False, (0, 255, 0))
+        text = font.render(f"fps={int(fps)}", False, (0, 255, 0))
         screen.blit(text, (screen.get_rect().centerx, 0))
 
     def update_display():
@@ -69,7 +69,7 @@ def main() -> None:
         pg.display.flip()
 
     # Construct game objects
-    player = game_objects.Player((3, 10))
+    player = game_objects.Player((1.5, 1.5))
     grid = game_objects.Grid
     mini_map = game_objects.MiniMap()
     pg.init()
@@ -115,7 +115,9 @@ def main() -> None:
     # Main game LOOP
     running = True
     while running:
-        clock.tick(constants.FPS)
+        dt = clock.tick(constants.FPS)
+        fps = clock.get_fps()
+        # print(f"fps={fps}")
         # HANDLE EVENTS
         running = handle_events()  # Run until the user asks to quit
         # DRAW
@@ -220,7 +222,7 @@ def cast_rays(
         (y_start, y_end) = y_limits
         height = y_end - y_start
         # How much to increase the texture coordinate per screen pixel
-        step = 64 / height
+        step = constants.TEX_HEIGHT / (height)
         # collect colors
         numbers = (
             min(
@@ -238,6 +240,7 @@ def cast_rays(
         return buffer.change_column(pixel_buffer, x, colors, y_start=y_start)
 
     def calculate_wall_x(start, distance, ray) -> float:
+        assert distance >= 0
         if side == 0:
             x = start.y + distance * ray.y
         elif side == 1:
@@ -254,29 +257,48 @@ def cast_rays(
         if side == 1 and ray.y < 0:
             x = constants.TEX_WIDTH - x - 1
         return x
-    assert step >= 1, "Step must be greater than 0"
-    # begin raycasting
-    for x in range(0, width, step):
-        ray = get_ray(x, direction, plane, width)
-        dist, side, element = run_along_ray(origin, ray, grid_dict)[:]
-        if side == -1:
-            # ray did not collide with anything, so move to next x coordinate
-            continue
+
+    def draw_slice(minor_step):
+        step = minor_step
         (y_start, y_end) = y_limits = get_y_limits(dist, height)
         tex_x = calculate_texture_x(side, calculate_wall_x(origin, dist, ray), ray)
         if element >= 100:
             s = slice(y_start, y_end)
-            pixel_buffer[x][s] = pixel.get_pixel_column(
+            col = pixel.get_pixel_column(
                 side,
                 y_start,
                 y_end,
-                y_vals[s]-y_start,
+                y_vals[s] - y_start,
                 images[constants.INT_TO_INDEX[element]],
                 tex_x,
+                step,
             )
+            for i in range(step):
+                j = x + i
+                if j < width - 1:
+                    pixel_buffer[j][s] = col
         else:
             color = get_color(dist, side, element)
-            draw_wall(local_surface, color, x, y_limits, 1, slow)
+            draw_wall(local_surface, color, x, y_limits, step, slow)
+
+    assert step >= 1, "Step must be greater than 0"
+    assert step == 1 or step % 2 == 0, "Step must be 1 or even"
+    # begin raycasting
+    x = 0
+    while x < width:
+        ray = get_ray(x, direction, plane, width)
+        dist, side, element = run_along_ray(origin, ray, grid_dict)[:]
+        dist = abs(dist)
+        if side == -1 or dist < 0.2:
+            # ray did not collide with anything, so move to next x coordinate
+            minor_step = step
+            continue
+        else:
+            minor_step = step + int(dist // constants.INTERVAL)
+            if minor_step < 0:
+                print(minor_step)
+            draw_slice(minor_step)
+        x += minor_step
     buffer.draw_buffer(pixel_buffer, screen, screen)
     screen.blit(local_surface, (0, 0))
 
