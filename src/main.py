@@ -21,6 +21,7 @@ import numerical
 import constants
 import functions
 import buffer
+import pixel
 
 
 def main() -> None:
@@ -108,6 +109,9 @@ def main() -> None:
         arr_10,
         arr_11,
     )
+    local_surface = screen.copy()
+    local_surface.set_colorkey((0, 0, 0))
+    y_vals = np.arange(constants.SIZE[1], dtype=np.uintc)
     # Main game LOOP
     running = True
     while running:
@@ -118,6 +122,7 @@ def main() -> None:
         clear_screen()
         pixel_buffer = np.copy(empty_buffer)
         # cast rays and draw walls
+        local_surface.fill((0, 0, 0))
         cast_rays(
             screen,
             player.xy,
@@ -128,6 +133,8 @@ def main() -> None:
             height,
             pixel_buffer,
             images,
+            local_surface,
+            y_vals,
             step=constants.STEP,
             slow=constants.SLOW,
         )
@@ -148,6 +155,8 @@ def cast_rays(
     height,
     pixel_buffer,
     images,
+    local_surface,
+    y_vals,
     step=1,
     slow=False,
 ):
@@ -189,15 +198,11 @@ def cast_rays(
             y_end = height - 1
         return (y_start, y_end)
 
-    def draw_wall(screen, color, x, y_limits, step, slow, pixel_buffer, tex_x):
+    def draw_wall(screen, color, x, y_limits, step, slow):
         """Draw section of a wall encountered by ray."""
         (y_start, y_end) = y_limits
         for i in range(step):
             pg.draw.aaline(screen, color, (x + i, y_start), (x + i, y_end))
-        # for y in range(y_start, y_end+1):
-        #    for i in range(step):
-        #        pixel_buffer = buffer.change_color(pixel_buffer, x + i, y, color)
-        return pixel_buffer
 
     def draw_textured_wall(
         screen, side, x, y_limits, slow, pixel_buffer, tex_x, texture
@@ -249,10 +254,7 @@ def cast_rays(
         if side == 1 and ray.y < 0:
             x = constants.TEX_WIDTH - x - 1
         return x
-
     assert step >= 1, "Step must be greater than 0"
-    local_sur = screen.copy()
-    local_sur.set_colorkey((0, 0, 0))
     # begin raycasting
     for x in range(0, width, step):
         ray = get_ray(x, direction, plane, width)
@@ -260,26 +262,23 @@ def cast_rays(
         if side == -1:
             # ray did not collide with anything, so move to next x coordinate
             continue
-        y_limits = get_y_limits(dist, height)
+        (y_start, y_end) = y_limits = get_y_limits(dist, height)
         tex_x = calculate_texture_x(side, calculate_wall_x(origin, dist, ray), ray)
         if element >= 100:
-            pixel_buffer = draw_textured_wall(
-                screen,
+            s = slice(y_start, y_end)
+            pixel_buffer[x][s] = pixel.get_pixel_column(
                 side,
-                x,
-                y_limits,
-                slow,
-                pixel_buffer,
-                tex_x,
+                y_start,
+                y_end,
+                y_vals[s]-y_start,
                 images[constants.INT_TO_INDEX[element]],
+                tex_x,
             )
         else:
             color = get_color(dist, side, element)
-            pixel_buffer = draw_wall(
-                local_sur, color, x, y_limits, step, slow, pixel_buffer, tex_x
-            )
+            draw_wall(local_surface, color, x, y_limits, 1, slow)
     buffer.draw_buffer(pixel_buffer, screen, screen)
-    screen.blit(local_sur, (0, 0))
+    screen.blit(local_surface, (0, 0))
 
 
 def run_along_ray(start, direction_ray, grid_dict):
