@@ -32,14 +32,14 @@ Game runtime settings can be changing by modifying src/constants.py. A list of s
 <!-- ROADMAP -->
 ## Roadmap
 
-- [] WRITE README
+- [ ] WRITE README
     - [ ] Table of contents
     - [ ] Installation
 		- [ ] Usage
 		- [ ] Fill out acknowledgements
 		- [ ] Update example media
-- [] Add to main functions documentation
-- [] Format code
+- [ ] Add to main functions documentation
+- [ ] Format code
 
 
 <!-- LICENSE -->
