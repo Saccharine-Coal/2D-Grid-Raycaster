@@ -9,13 +9,14 @@ SIZE = (600, 600)               # game window size
 FPS = 60                        # max fps of game
 
 # WORLD SETTINGS
-STEP = 2                        # how many steps to take when casting rays
 SLOW = False                    # show raycasting drawing process
 RANDOM = True
 EMPTY_CHANCE = 0.8
 DIM = 40
-# maps grid elements to colors
+# RGBA -> int
+# (R & 0xff) << 24 | (G & 0xff) << 16 | (B & 0xff) << 8 | (A & 0xff)
 INT_TO_COLOR = {
+    # maps grid elements to colors
     1: (255, 0, 0),
     2: (0, 255, 0),
     3: (0, 0, 255),
@@ -53,5 +54,6 @@ if SLOW:
 SCALE = 4                       # scaling of minimap
 
 # TEXTURE SETTINGS
+STEP = 1                        # how many steps to take when casting rays
 TEX_WIDTH = TEX_HEIGHT = 64
 INTERVAL = 3        # controls quality of textures as a function of distance

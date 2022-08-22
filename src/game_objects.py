@@ -5,7 +5,8 @@ import functions
 import constants
 import grid
 
-
+# TODO: for debugging
+GRID = grid.GRID
 # construct dictionary from a nested array to simplify grid indexing
 Grid = {}
 for x, row in enumerate(grid.GRID):
@@ -57,7 +58,7 @@ class Player:
 
     def is_colliding(self, x, y) -> bool:
         return False
-        # TODO: implement a working function
+        # TODO: implement a working functio
         pos = (int(round(x)), int(round(y)))
         if pos in self.grid and self.grid[pos] != 0:
             return True

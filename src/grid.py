@@ -1,6 +1,8 @@
 """Separate file to hold the grid array. Also checks the structure of the grid."""
 import random
 
+import numpy as np
+
 import constants
 
 """
@@ -60,14 +62,19 @@ if constants.RANDOM:
     GRID = list(list(f(i, j) for j in range(n+1)) for i in range(n+1))
 
 # PLEASE DO NOT MODIFY THE FOLLOWING LINES
-# set (1, 1) to be empty. always place player here
-GRID[1][1] = 0
+# set (1-2, 1-2) to be empty. always place player here
+for i in range(2):
+    for j in range(2):
+        GRID[1+i][1+j] = 0
+
+# convert grid to array for numba
+GRID = np.array(GRID, dtype="int64")
 
 # check structure and data of grid
 assert all(len(GRID) == len(row) for row in GRID), "Grid should be square!"
 # element wise assertions
 for row in GRID:
     for val in row:
-        assert isinstance(val, int), "Non integer element in grid!"
+        assert isinstance(val, np.int64), "Non integer element in grid!"
         valid = (val == 0 or val in constants.INT_TO_COLOR or val in constants.INT_TO_INDEX)
         assert valid, f"Element, {val}, defined in GRID not defined in constants.INT_TO_COLOR or constants.INT_TO_INDEX"
